@@ -38,7 +38,7 @@ fun init() {
 
         server.execute {
             val playerPos = Vec3d(x, y, z)
-            val world = player.world
+            val world = player.serverWorld
 
             BlockPos.findClosest(BlockPos(playerPos), 7, 7) {
                 world.getBlockState(it).isOf(SNAP_DETECTOR)
@@ -47,7 +47,7 @@ fun init() {
                 val block = state.block
 
                 if (block is SnapDetectorBlock) {
-                    block.trigger(world as ServerWorld, state, it, playerPos)
+                    block.trigger(world, state, it, playerPos)
                 }
             }
         }

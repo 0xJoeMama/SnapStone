@@ -1,6 +1,5 @@
 package io.github.llamarama.team.snapstone.common.block
 
-import io.github.llamarama.team.snapstone.getLogger
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.server.world.ServerWorld
@@ -46,8 +45,7 @@ class SnapDetectorBlock(settings: Settings) : Block(settings) {
 
     private fun calculatePower(playerPos: Vec3d, blockPos: BlockPos): Int {
         val distance = playerPos.distanceTo(Vec3d.ofCenter(blockPos))
-
-        getLogger().info(distance)
+//        getLogger().info(distance)
         return when {
             distance >= 15 -> 15
             distance < 15 && distance > 1 -> distance.toInt()
@@ -64,15 +62,13 @@ class SnapDetectorBlock(settings: Settings) : Block(settings) {
         world: BlockView?,
         pos: BlockPos?,
         direction: Direction?,
-    ): Int {
-        return when {
-            state?.get(TRIGGERED) == true -> 15
-            else -> 0
-        }
+    ): Int = when {
+        state?.get(TRIGGERED) == true -> 15
+        else -> 0
     }
 
 
-    override fun hasComparatorOutput(state: BlockState?): Boolean = state?.get(TRIGGERED) == true
+    override fun hasComparatorOutput(state: BlockState?): Boolean = state?.get(TRIGGERED) ?: false
 
 
     override fun getComparatorOutput(state: BlockState?, world: World?, pos: BlockPos?): Int = state?.get(POWER) ?: 0
