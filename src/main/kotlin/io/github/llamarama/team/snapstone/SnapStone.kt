@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.llamarama.team.snapstone
 
 import io.github.llamarama.team.snapstone.common.block.SnapDetectorBlock
@@ -7,7 +9,7 @@ import net.minecraft.block.Blocks
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
-import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -22,8 +24,8 @@ const val MODID: String = "snapstone"
 val SNAP_CHANNEL_ID = id("snap")
 
 val SNAP_DETECTOR = SnapDetectorBlock(AbstractBlock.Settings.copy(Blocks.STONE))
+val SNAP = SoundEvent(id("snap"))
 
-@Suppress("unused")
 fun init() {
     Registry.register(Registry.BLOCK, id("snap_detector"), SNAP_DETECTOR)
     Registry.register(
@@ -40,14 +42,14 @@ fun init() {
             val playerPos = Vec3d(x, y, z)
             val world = player.serverWorld
 
-            BlockPos.findClosest(BlockPos(playerPos), 7, 7) {
+            BlockPos.findClosest(BlockPos(playerPos), 15, 15) {
                 world.getBlockState(it).isOf(SNAP_DETECTOR)
             }.ifPresent {
                 val state = world.getBlockState(it)
                 val block = state.block
 
                 if (block is SnapDetectorBlock) {
-                    block.trigger(world, state, it, playerPos)
+                    block.trigger(world, state, it, playerPos, player)
                 }
             }
         }

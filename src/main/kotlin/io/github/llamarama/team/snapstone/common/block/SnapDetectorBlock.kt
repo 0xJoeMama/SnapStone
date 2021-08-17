@@ -1,8 +1,11 @@
 package io.github.llamarama.team.snapstone.common.block
 
+import io.github.llamarama.team.snapstone.SNAP
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundCategory
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.IntProperty
@@ -35,10 +38,10 @@ class SnapDetectorBlock(settings: Settings) : Block(settings) {
         world?.setBlockState(pos, state?.with(TRIGGERED, false)?.with(POWER, 0))
     }
 
-    fun trigger(world: ServerWorld, state: BlockState, pos: BlockPos, playerPos: Vec3d) {
+    fun trigger(world: ServerWorld, state: BlockState, pos: BlockPos, playerPos: Vec3d, player: ServerPlayerEntity) {
         if (!world.blockTickScheduler.isScheduled(pos, this)) {
-            world.setBlockState(pos,
-                state.with(TRIGGERED, true).with(POWER, calculatePower(playerPos, pos)))
+            world.playSoundFromEntity(null, player, SNAP, SoundCategory.PLAYERS, 1.0f, 1.0f)
+            world.setBlockState(pos, state.with(TRIGGERED, true).with(POWER, calculatePower(playerPos, pos)))
             world.blockTickScheduler.schedule(pos, this, 60)
         }
     }

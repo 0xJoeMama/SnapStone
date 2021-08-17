@@ -1,0 +1,8 @@
+{
+    "snap": {
+        "subtitle": "subtitles.snapstone.snap",
+        "sounds": [
+            "snapstone:snap"
+        ]
+    }
+}
