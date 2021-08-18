@@ -9,7 +9,7 @@ import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
 
-val SNAP_KEY_BINDING: KeyBinding = KeyBinding(
+val SNAP_KEY_BINDING = KeyBinding(
     "snapstone.snap.key",
     InputUtil.Type.KEYSYM,
     GLFW.GLFW_KEY_H,

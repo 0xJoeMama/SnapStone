@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " # ",
+        "iBi",
+        "iCi"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:lever"
+        },
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "B": {
+            "item": "minecraft:black_wool"
+        },
+        "C": {
+            "item": "minecraft:comparator"
+        }
+    },
+    "result": {
+        "item": "snapstone:toggled_snap_detector",
+        "count": 1
+    }
+}

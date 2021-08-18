@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "snapstone:snap_detector"
+        },
+        {
+            "item": "minecraft:lever"
+        }
+    ],
+    "result": {
+        "item": "snapstone:toggled_snap_detector",
+        "count": 1
+    }
+}

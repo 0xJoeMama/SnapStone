@@ -1,3 +1,24 @@
 {
-
+    "multipart": [
+        {
+            "when": {
+                "triggered": "true"
+            },
+            "apply": [
+                {
+                    "model": "snapstone:block/triggered_toggled_snap_detector"
+                }
+            ]
+        },
+        {
+            "when": {
+                "triggered": "false"
+            },
+            "apply": [
+                {
+                    "model": "snapstone:block/toggled_snap_detector"
+                }
+            ]
+        }
+    ]
 }

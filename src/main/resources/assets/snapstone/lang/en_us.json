@@ -1,5 +1,7 @@
 {
     "snapstone.snap.key": "Snap",
     "snapstone.snap.category": "SnapStone",
-    "subtitles.snapstone.snap": "Fingers snapping..."
+    "subtitles.snapstone.snap": "Fingers snapping...",
+    "block.snapstone.snap_detector": "Snap Detector",
+    "block.snapstone.toggled_snap_detector": "Toggled Snap Detector"
 }
