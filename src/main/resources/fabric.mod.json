@@ -12,6 +12,7 @@
         "DigitalPear"
     ],
     "contact": {},
+    "icon": "assets/snapstone/snapstone_logo.jpg",
 
     "license": "MIT",
     "environment": "*",
