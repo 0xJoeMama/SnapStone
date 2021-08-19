@@ -11,7 +11,11 @@
         "BrianComics",
         "DigitalPear"
     ],
-    "contact": {},
+    "contact": {
+        "issues": "https://github.com/LlamaramaTeam/SnapStone/issues",
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/snapstone",
+        "sources": "https://github.com/LlamaramaTeam/SnapStone"
+    },
     "icon": "assets/snapstone/snapstone_logo.jpg",
 
     "license": "MIT",
