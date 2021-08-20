@@ -14,6 +14,7 @@ import net.minecraft.state.property.Properties
 import net.minecraft.util.function.BooleanBiFunction
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.util.shape.VoxelShapes
@@ -78,12 +79,7 @@ open class SnapDetectorBlock(settings: Settings) : Block(settings) {
     protected fun calculatePower(playerPos: Vec3d, blockPos: BlockPos): Int {
         val distance = playerPos.distanceTo(Vec3d.ofCenter(blockPos))
 
-        return when {
-            distance >= 15 -> 15
-            distance < 15 && distance > 1 -> distance.toInt()
-            distance <= 1 -> 1
-            else -> 0
-        }
+        return MathHelper.clamp(distance, 1.0, 15.0).toInt()
     }
 
     override fun emitsRedstonePower(state: BlockState?): Boolean = true
