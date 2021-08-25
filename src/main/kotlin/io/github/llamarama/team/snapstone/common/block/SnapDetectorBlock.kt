@@ -4,6 +4,7 @@ import io.github.llamarama.team.snapstone.SNAP
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.ShapeContext
+import net.minecraft.block.piston.PistonBehavior
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
@@ -29,13 +30,13 @@ open class SnapDetectorBlock(settings: Settings) : Block(settings) {
     companion object {
         val TRIGGERED: BooleanProperty = BooleanProperty.of("triggered")
         val POWER: IntProperty = Properties.POWER
-        private val SHAPE_NORMAL: VoxelShape = listOf(
+        private val SHAPE_NORMAL: VoxelShape = arrayOf(
             createCuboidShape(2.0, 8.0, 2.0, 14.0, 11.0, 14.0),
             createCuboidShape(3.0, 3.0, 3.0, 13.0, 8.0, 13.0),
             createCuboidShape(2.0, 0.0, 2.0, 14.0, 3.0, 14.0),
             createCuboidShape(3.0, 11.0, 3.0, 13.0, 13.0, 13.0)
         ).reduce { shape1, shape2 -> VoxelShapes.combineAndSimplify(shape1, shape2, BooleanBiFunction.OR) }
-        private val SHAPE_TRIGGERED: VoxelShape = listOf(
+        private val SHAPE_TRIGGERED: VoxelShape = arrayOf(
             createCuboidShape(2.0, 8.0, 2.0, 14.0, 11.0, 14.0),
             createCuboidShape(3.0, 3.0, 3.0, 13.0, 8.0, 13.0),
             createCuboidShape(2.0, 0.0, 2.0, 14.0, 3.0, 14.0),
@@ -122,4 +123,9 @@ open class SnapDetectorBlock(settings: Settings) : Block(settings) {
         super.onStateReplaced(state, world, pos, newState, moved)
         world?.updateNeighborsAlways(pos?.down(), state?.block)
     }
+
+    override fun getPistonBehavior(state: BlockState?): PistonBehavior {
+        return PistonBehavior.BLOCK
+    }
+
 }

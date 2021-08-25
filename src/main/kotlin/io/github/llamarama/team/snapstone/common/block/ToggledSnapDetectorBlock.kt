@@ -17,6 +17,14 @@ import java.util.*
 
 class ToggledSnapDetectorBlock(settings: Settings) : SnapDetectorBlock(settings) {
 
+    companion object {
+        private val SHAPE: VoxelShape = listOf(
+            createCuboidShape(2.0, 8.0, 2.0, 14.0, 11.0, 14.0),
+            createCuboidShape(3.0, 3.0, 3.0, 13.0, 8.0, 13.0),
+            createCuboidShape(2.0, 0.0, 2.0, 14.0, 3.0, 14.0)
+        ).reduce { shape1, shape2 -> VoxelShapes.combineAndSimplify(shape1, shape2, BooleanBiFunction.OR) }
+    }
+
     override fun trigger(
         world: ServerWorld, state: BlockState, pos: BlockPos, playerPos: Vec3d, player: ServerPlayerEntity,
     ) {
@@ -37,12 +45,6 @@ class ToggledSnapDetectorBlock(settings: Settings) : SnapDetectorBlock(settings)
         state: BlockState?,
         world: BlockView?,
         pos: BlockPos?,
-        context: ShapeContext?,
-    ): VoxelShape {
-        return listOf(
-            createCuboidShape(2.0, 8.0, 2.0, 14.0, 11.0, 14.0),
-            createCuboidShape(3.0, 3.0, 3.0, 13.0, 8.0, 13.0),
-            createCuboidShape(2.0, 0.0, 2.0, 14.0, 3.0, 14.0)
-        ).reduce { shape1, shape2 -> VoxelShapes.combineAndSimplify(shape1, shape2, BooleanBiFunction.OR) }
-    }
+        context: ShapeContext?
+    ): VoxelShape = SHAPE
 }
