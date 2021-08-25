@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "snapstone:snap_detector",
+        "snapstone:toggled_snap_detector"
+    ]
+}
