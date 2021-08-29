@@ -1,18 +1,27 @@
-package io.github.llamarama.team.snapstone.common;
+package io.github.llamarama.team.snapstone.common.block;
 
 import io.github.llamarama.team.snapstone.SnapStone;
+import io.github.llamarama.team.snapstone.common.block_entity.PersonalizedSnapDetectorBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.function.BooleanBiFunction;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 
 import java.util.Random;
 import java.util.stream.Stream;
@@ -43,6 +52,27 @@ public class ToggledSnapDetectorBlock extends SnapDetectorBlock {
             world.updateNeighborsAlways(pos.down(), this);
         }
     }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ItemStack stackInHand = player.getStackInHand(hand);
+
+        if (stackInHand.isOf(Items.DIAMOND)) {
+            stackInHand.decrement(1);
+
+            world.setBlockState(pos, SnapStone.PERSONAL_TOGGLED_DETECTOR.getDefaultState());
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+
+            if (blockEntity instanceof PersonalizedSnapDetectorBlockEntity detectorBlockEntity) {
+                detectorBlockEntity.setOwner(player);
+            }
+
+            return ActionResult.SUCCESS;
+        }
+
+        return super.onUse(state, world, pos, player, hand, hit);
+    }
+
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
