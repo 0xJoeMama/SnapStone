@@ -1,0 +1,6 @@
+{
+  "parent": "snapstone:block/triggered_snap_detector",
+  "textures": {
+    "2": "block/diamond_block"
+  }
+}

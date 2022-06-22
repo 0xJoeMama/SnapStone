@@ -6,7 +6,7 @@
             },
             "apply": [
                 {
-                    "model": "snapstone:block/triggered_snap_detector"
+                    "model": "snapstone:block/personal_triggered_toggled_snap_detector"
                 }
             ]
         },
@@ -16,7 +16,7 @@
             },
             "apply": [
                 {
-                    "model": "snapstone:block/snap_detector"
+                    "model": "snapstone:block/personal_toggled_snap_detector"
                 }
             ]
         }

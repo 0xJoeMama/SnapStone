@@ -25,9 +25,9 @@ public class PersonalizedSnapDetectorBlockEntity extends BlockEntity {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
         nbt.putUuid(OWNER_NBT, this.owner);
-        return super.writeNbt(nbt);
     }
 
     public UUID getOwner() {

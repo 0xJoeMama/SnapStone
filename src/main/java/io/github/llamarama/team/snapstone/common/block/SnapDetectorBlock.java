@@ -1,5 +1,6 @@
 package io.github.llamarama.team.snapstone.common.block;
 
+import com.mojang.datafixers.util.Either;
 import io.github.llamarama.team.snapstone.SnapStone;
 import io.github.llamarama.team.snapstone.common.block_entity.PersonalizedSnapDetectorBlockEntity;
 import net.minecraft.block.Block;
@@ -13,6 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
@@ -25,12 +27,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.stream.Stream;
 
 public class SnapDetectorBlock extends Block {
@@ -44,7 +48,7 @@ public class SnapDetectorBlock extends Block {
                     Block.createCuboidShape(3.0, 11.0, 3.0, 13.0, 13.0, 13.0)
             ).reduce((voxelShape, voxelShape2) ->
                     VoxelShapes.combineAndSimplify(voxelShape, voxelShape2, BooleanBiFunction.OR))
-            .orElseGet(VoxelShapes::empty);
+            .orElseThrow();
     private static final VoxelShape TRIGGERED_SHAPE = Stream.of(
                     Block.createCuboidShape(2.0, 8.0, 2.0, 14.0, 11.0, 14.0),
                     Block.createCuboidShape(3.0, 3.0, 3.0, 13.0, 8.0, 13.0),
@@ -52,7 +56,7 @@ public class SnapDetectorBlock extends Block {
                     Block.createCuboidShape(3.0, 11.0, 3.0, 13.0, 12.0, 13.0)
             ).reduce((voxelShape, voxelShape2) ->
                     VoxelShapes.combineAndSimplify(voxelShape, voxelShape2, BooleanBiFunction.OR))
-            .orElseGet(VoxelShapes::empty);
+            .orElseThrow();
 
     public SnapDetectorBlock(Settings settings) {
         super(settings);
@@ -60,6 +64,19 @@ public class SnapDetectorBlock extends Block {
                 .with(TRIGGERED, false)
                 .with(POWER, 0)
         );
+    }
+
+    @NotNull
+    static ActionResult createPersonal(World world, BlockPos pos, PlayerEntity player) {
+        world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1, 1);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+
+        if (blockEntity instanceof PersonalizedSnapDetectorBlockEntity detectorBlockEntity) {
+            detectorBlockEntity.setOwner(player);
+        }
+
+        return ActionResult.SUCCESS;
     }
 
     @SuppressWarnings("deprecation")
@@ -72,13 +89,7 @@ public class SnapDetectorBlock extends Block {
                 stackInHand.decrement(1);
 
                 world.setBlockState(pos, SnapStone.PERSONAL_DETECTOR.getDefaultState());
-                BlockEntity blockEntity = world.getBlockEntity(pos);
-
-                if (blockEntity instanceof PersonalizedSnapDetectorBlockEntity detectorBlockEntity) {
-                    detectorBlockEntity.setOwner(player);
-                }
-
-                return ActionResult.SUCCESS;
+                return createPersonal(world, pos, player);
             }
         }
 
@@ -86,14 +97,25 @@ public class SnapDetectorBlock extends Block {
     }
 
     public void trigger(ServerWorld world, BlockState state, BlockPos pos, Vec3d playerPos, ServerPlayerEntity player) {
-        if (!world.getBlockTickScheduler().isScheduled(pos, this)) {
+        if (!world.getBlockTickScheduler().isQueued(pos, this)) {
             world.playSoundFromEntity(null, player, SnapStone.SNAP, SoundCategory.PLAYERS, 1.0f, 1.0f);
-            world.setBlockState(pos,
-                    state.with(TRIGGERED, true)
-                            .with(POWER, this.calculatePower(playerPos, pos))
+            this.modifyBlockState(
+                    world,
+                    pos, state.with(TRIGGERED, true).with(POWER, this.calculatePower(playerPos, pos)),
+                    Either.left(player), true
             );
-            world.getBlockTickScheduler().schedule(pos, this, 30);
-            world.updateNeighborsAlways(pos.down(), this);
+        }
+    }
+
+    protected void modifyBlockState(ServerWorld world, BlockPos pos, BlockState state, Either<PlayerEntity, BlockState> either, boolean schedule) {
+        world.setBlockState(pos, state);
+        world.updateNeighborsAlways(pos.down(), this);
+        either.mapBoth(GameEvent.Emitter::of, GameEvent.Emitter::of)
+                .ifLeft(emitter -> world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, emitter))
+                .ifRight(emitter -> world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, emitter));
+
+        if (schedule) {
+            world.createAndScheduleBlockTick(pos, this, 30);
         }
     }
 
@@ -106,8 +128,13 @@ public class SnapDetectorBlock extends Block {
     @SuppressWarnings("deprecation")
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        world.setBlockState(pos, state.with(TRIGGERED, false).with(POWER, 0));
-        world.updateNeighborsAlways(pos.down(), this);
+        this.modifyBlockState(
+                world,
+                pos,
+                state.with(TRIGGERED, false).with(POWER, 0),
+                Either.right(state),
+                false
+        );
     }
 
     @SuppressWarnings("deprecation")

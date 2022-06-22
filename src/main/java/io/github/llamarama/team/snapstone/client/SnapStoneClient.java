@@ -23,7 +23,7 @@ public class SnapStoneClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(SNAP_KEY_BINDING);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (SNAP_KEY_BINDING.isPressed() && SNAP_KEY_BINDING.wasPressed()) {
+            if (!SNAP_KEY_BINDING.isPressed() && SNAP_KEY_BINDING.wasPressed()) {
                 PacketByteBuf buffer = PacketByteBufs.create();
 
                 if (client.player != null) {

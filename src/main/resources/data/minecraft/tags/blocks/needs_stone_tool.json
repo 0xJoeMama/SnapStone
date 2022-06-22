@@ -3,7 +3,7 @@
     "values": [
         "snapstone:snap_detector",
         "snapstone:toggled_snap_detector",
-        "snapstone:personalized_toggled_snap_detector",
-        "snapstone:personalized_snap_detector"
+        "snapstone:personal_toggled_snap_detector",
+        "snapstone:personal_snap_detector"
     ]
 }
