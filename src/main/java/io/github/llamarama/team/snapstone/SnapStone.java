@@ -48,6 +48,7 @@ public class SnapStone implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        Registry.register(Registry.SOUND_EVENT, id("snap"), SNAP);
         Registry.register(Registry.BLOCK, id("snap_detector"), SNAP_DETECTOR);
         Registry.register(
                 Registry.ITEM, id("snap_detector"),
@@ -76,7 +77,6 @@ public class SnapStone implements ModInitializer {
                     .filter(pos -> world.getBlockState(pos).getBlock() instanceof SnapDetectorBlock)
                     .forEach(pos -> {
                         BlockState state = world.getBlockState(pos);
-
                         ((SnapDetectorBlock) state.getBlock()).trigger(world, state, pos, playerPos, player);
                     }));
         });

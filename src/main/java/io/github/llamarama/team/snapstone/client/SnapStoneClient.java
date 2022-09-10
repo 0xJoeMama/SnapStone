@@ -24,9 +24,8 @@ public class SnapStoneClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!SNAP_KEY_BINDING.isPressed() && SNAP_KEY_BINDING.wasPressed()) {
-                PacketByteBuf buffer = PacketByteBufs.create();
-
                 if (client.player != null) {
+                    PacketByteBuf buffer = PacketByteBufs.create();
                     Vec3d playerPos = client.player.getPos();
 
                     buffer.writeDouble(playerPos.x);
